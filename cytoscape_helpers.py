@@ -114,7 +114,7 @@ cooc_cytoscape = cyto.Cytoscape(
         id='cooccurence-network',
         minZoom=1,
         layout={'name': 'cose'},
-        style={'width': '100%', 'height': '800px'},
+        style={'width': '85%', 'height': '800px'},
         elements=[],
         stylesheet=[
             {
@@ -172,7 +172,8 @@ cooc_tab = [
     html.P("Search Term (Precalulated Cooccurrences)"),
     dcc.Dropdown(
         id='term',
-        options=[{'label': word, 'value': word} for word in ALL_WORD_TERMS]
+        options=[{'label': word, 'value': word} for word in ALL_WORD_TERMS],
+        value=ALL_WORD_TERMS[0]
     ),
     html.P("Statistic:"),
     dcc.Dropdown(

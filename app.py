@@ -6,6 +6,7 @@ from dash.dependencies import Input, Output, State
 
 import text_content
 import cytoscape_helpers
+import text_helpers
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
@@ -20,7 +21,10 @@ server = app.server
 app.layout = html.Div([
     dcc.Markdown(children=text_content.opening_text),
     dcc.Tabs([
-        dcc.Tab(label='View Texts'),
+        dcc.Tab(
+            label='View Texts',
+            children=text_helpers.text_tab
+            ),
         dcc.Tab(
             label='Cooccurence Networks',
             children=cytoscape_helpers.cooc_tab),
@@ -61,6 +65,14 @@ def update_network(n_clicks, rep, dict, term, stat, pri_cooc_num, sec_cooc_num):
     return cytoscape_helpers.generate_network(
         rep, dict, term, stat, pri_cooc_num, sec_cooc_num
     )
+
+# Text display callbacks
+@app.callback(
+    Output(component_id='text-display', component_property='children'),
+    Input(component_id='text-select', component_property='value')
+)
+def update_text(value):
+    return text_helpers.text_as_html(value)
 
 
 if __name__ == '__main__':
