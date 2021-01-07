@@ -176,7 +176,7 @@ cooc_tab = [
     dcc.Dropdown(
         id='stat-choice',
         options=[
-            {'label': 'Mutual likelihood', 'value': 'ml'},
+            {'label': 'Mutual information', 'value': 'ml'},
             {'label': 'Log Dice', 'value': 'log dice'}
         ],
         value='ml'
