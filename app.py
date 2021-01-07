@@ -27,8 +27,7 @@ app.layout = html.Div([
             ),
         dcc.Tab(
             label='Cooccurence Networks',
-            children=cytoscape_helpers.cooc_tab),
-        dcc.Tab(label='Topic Models')
+            children=cytoscape_helpers.cooc_tab)
     ])
 ])
 # Cooccurence callbacks.

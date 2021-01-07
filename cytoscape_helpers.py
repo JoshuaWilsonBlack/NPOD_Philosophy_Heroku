@@ -22,7 +22,6 @@ ALL_WORD_TERMS = [
 ]
 
 ENTITY_TERMS = [
-    'philosophy',
     'plato',
     'stout',
     'theosophy',
@@ -30,8 +29,6 @@ ENTITY_TERMS = [
     'canterbury college',
     'the new zealand institute',
     'the church',
-    'the professor',
-    'the philosopher',
     'new zealand'
 ]
 
@@ -114,7 +111,7 @@ cooc_cytoscape = cyto.Cytoscape(
         id='cooccurence-network',
         minZoom=1,
         layout={'name': 'cose'},
-        style={'width': '85%', 'height': '800px'},
+        style={'width': '85%', 'height': '800px', 'margin': 'auto'},
         elements=[],
         stylesheet=[
             {
@@ -190,7 +187,7 @@ cooc_tab = [
         min=1,
         max=50,
         step=1,
-        value=10,
+        value=15,
         marks = {n: f'{n}' for n in [i for i in range(1, 51) if i%5==0]}
     ),
     html.P('Secondary Cooccurences'),
@@ -199,7 +196,7 @@ cooc_tab = [
         min=1,
         max=50,
         step=1,
-        value=10,
+        value=5,
         marks = {n: f'{n}' for n in [i for i in range(1, 51) if i%5==0]}
     ),
     html.Button('Submit', id='submit-val', n_clicks=0),
