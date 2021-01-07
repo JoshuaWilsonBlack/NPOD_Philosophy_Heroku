@@ -1,0 +1,13 @@
+name: data601_heroku #Environment name
+dependencies:
+  - python=3.6
+  - pip:
+    - dash
+    - dash-renderer
+    - dash-core-components
+    - dash-html-components
+    - dash-cytoscape
+    - pandas
+    - networkx
+    - plotly
+    - gunicorn # for app deployment
