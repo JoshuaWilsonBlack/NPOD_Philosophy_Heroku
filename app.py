@@ -2,95 +2,66 @@ import dash
 import dash_core_components as dcc
 import dash_cytoscape as cyto
 import dash_html_components as html
-
+from dash.dependencies import Input, Output, State
 
 import text_content
+import cytoscape_helpers
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
+app.title = 'Philosophical Discourse in Early New Zealand Newspapers'
+
 server = app.server
 
-# philo_cytoscape = cyto.Cytoscape(
-#         id='philosophy-network',
-#         minZoom=1,
-#         layout={'name': 'cose'},
-#         style={'width': '100%', 'height': '800px'},
-#         elements=philo_net,
-#         stylesheet=[
-#             {
-#                 'selector': 'edge',
-#                 'style': {
-#                     'width': 'mapData(weight, 3, 6, 1, 3)',
-#                     'line-color': 'silver'
-#                 }
-#             },
-#             {
-#                 'selector': 'node',
-#                 'style': {
-#                     'content': 'data(label)',
-#                     'width': 'mapData(size, 1, 10, 10, 20)',
-#                     'height': 'mapData(size, 1, 10, 10, 20)'
-#                 }
-#             },
-#             {
-#                 'selector': 'label',
-#                 'style': {
-#                     'font-size': 6,
-#                     'text-valign': 'center',
-#                     'text-background-color': 'white',
-#                     'text-background-opacity': 0.6,
-#                     'text-background-padding': 1,
-#                     'text-border-color': 'black',
-#                     'text-border-opacity': 1,
-#                     'text-border-width': 0.5
-#                 }
-#             }
-#         ]
-#     )
+
 
 app.layout = html.Div([
     dcc.Markdown(children=text_content.opening_text),
     dcc.Tabs([
-        dcc.Tab(label='All Text Collocation Networks'),
-        dcc.Tab(label='Named Entitity Collocation Networks'),
-        dcc.Tab(label='Proper Noun Collocation Networds')
-    ]),
-    dcc.Input(
-        id='search-term',
-        type='text',
-        value='philosophy'
-    ),
-    html.P("Statistic:"),
-    dcc.Dropdown(
-        id='stat-choice',
-        options=[
-            {'label': 'Mutual likelihood', 'value': 'ml'},
-            {'label': 'Log Dice', 'value': 'log dice'}
-        ],
-        value='ml'
-    ),
-    html.Button('Submit', id='submit-val', n_clicks=0)#,
-    #philo_cytoscape
+        dcc.Tab(label='View Texts'),
+        dcc.Tab(
+            label='Cooccurence Networks',
+            children=cytoscape_helpers.cooc_tab),
+        dcc.Tab(label='Topic Models')
+    ])
 ])
-#
-# @app.callback(
-#     Output(component_id='philosophy-network', component_property='elements'),
-#     Input(component_id='submit-val', component_property='n_clicks'),
-#     State(component_id='stat-choice', component_property='value'),
-#     State(component_id='search-term', component_property='value'),
-# )
-# def update_network_stat(n_clicks, stat_value, search_value):
-#     network = NL_helpers.network_dash(
-#         term=search_value,
-#         stat=stat_value,
-#         dtm=dtm,
-#         ttm=tt_df,
-#         num_coocs=10,
-#         sec_coocs=5
-#     )
-#     return network
+# Cooccurence callbacks.
+# First, change preloaded search terms given dictionary choice
+@app.callback(
+    Output(component_id='term', component_property='options'),
+    Input(component_id='dictionary', component_property='value')
+)
+def return_terms(dict_type):
+    """
+    Given the type of dictionary required (string) for a
+    collocation network, return the precalculated options (list).
+    """
+    if dict_type == 'all':
+        words = cytoscape_helpers.ALL_WORD_TERMS
+    elif dict_type == 'propn':
+        words = cytoscape_helpers.PROPN_TERMS
+    elif dict_type == 'entities':
+        words = cytoscape_helpers.ENTITY_TERMS
+
+    return [{'label': word, 'value': word} for word in words]
+
+@app.callback(
+    Output(component_id='cooccurence-network', component_property='elements'),
+    Input(component_id='submit-val', component_property='n_clicks'),
+    State(component_id='rep', component_property='value'),
+    State(component_id='dictionary', component_property='value'),
+    State(component_id='term', component_property='value'),
+    State(component_id='stat-choice', component_property='value'),
+    State(component_id='primary-coocs', component_property='value'),
+    State(component_id='secondary-coocs', component_property='value'),
+)
+def update_network(n_clicks, rep, dict, term, stat, pri_cooc_num, sec_cooc_num):
+    return cytoscape_helpers.generate_network(
+        rep, dict, term, stat, pri_cooc_num, sec_cooc_num
+    )
+
 
 if __name__ == '__main__':
     app.run_server(debug=True)
