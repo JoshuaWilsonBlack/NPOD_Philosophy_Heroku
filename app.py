@@ -1,6 +1,8 @@
 import dash
 import dash_core_components as dcc
+import dash_cytoscape as cyto
 import dash_html_components as html
+
 
 import text_content
 
@@ -9,10 +11,6 @@ external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 server = app.server
-
-top_markdown_text = '''
-This is my first deployed app
-'''
 
 # philo_cytoscape = cyto.Cytoscape(
 #         id='philosophy-network',
@@ -54,6 +52,11 @@ This is my first deployed app
 
 app.layout = html.Div([
     dcc.Markdown(children=text_content.opening_text),
+    dcc.Tabs([
+        dcc.Tab(label='All Text Collocation Networks'),
+        dcc.Tab(label='Named Entitity Collocation Networks'),
+        dcc.Tab(label='Proper Noun Collocation Networds')
+    ]),
     dcc.Input(
         id='search-term',
         type='text',
