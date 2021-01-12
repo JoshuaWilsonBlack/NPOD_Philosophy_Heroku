@@ -4,6 +4,8 @@ import dash_cytoscape as cyto
 import dash_html_components as html
 from dash.dependencies import Input, Output, State
 
+import pandas as pd
+
 import text_content
 import cytoscape_helpers
 import text_helpers
@@ -27,7 +29,10 @@ app.layout = html.Div([
             ),
         dcc.Tab(
             label='Cooccurence Networks',
-            children=cytoscape_helpers.cooc_tab)
+            children=cytoscape_helpers.cooc_tab),
+        # dcc.Tab(
+        #     label='Cooccurence Table',
+        #     children=cytoscape_helpers.cooc_table)
     ])
 ])
 # Cooccurence callbacks.
@@ -66,12 +71,73 @@ def update_network(n_clicks, rep, dict, term, stat, pri_cooc_num, sec_cooc_num):
     )
 
 # Text display callbacks
+# Update the displayed text.
 @app.callback(
-    Output(component_id='text-display', component_property='children'),
-    Input(component_id='text-select', component_property='value')
+    Output(component_id='text-box', component_property='srcDoc'),
+    Input(component_id='text-select', component_property='value'),
 )
-def update_text(value):
-    return text_helpers.text_as_html(value)
+def update_text(index):
+    return text_helpers.html_text(
+        index,
+        text_helpers.TEXTS
+    )
+
+
+# When corpus changes, load first doc
+@app.callback(
+    Output(component_id='text-select', component_property='value'),
+    Input(component_id='text-select', component_property='options')
+)
+def load_first_doc(indices):
+    return indices[0]['value']
+
+# # Filter corpus by search term.
+# @app.callback(
+#     Output(component_id='text-select', component_property='options'),
+#     Input(component_id='search-box', component_property='value'),
+#     State(component_id='sub-corpus', component_property='value')
+# )
+# def search_corpus(search_string, corpus):
+#     options = text_helpers.search_text(text_helpers.TEXTS, search_string)
+#     return options
+
+
+
+# Load subcorpus or filter by seach term.
+@app.callback(
+    Output(component_id='text-select', component_property='options'),
+    Input(component_id='sub-corpus', component_property='value'),
+    Input(component_id='search-box', component_property='value')
+)
+def change_corpus(subcorpus, search_term):
+    ctx = dash.callback_context
+    if not ctx.triggered:
+        component_id='sub_-orpus'
+    else:
+        component_id = ctx.triggered[0]['prop_id'].split('.')[0]
+
+    if component_id == 'sub-corpus':
+        text_helpers.TEXTS = pd.read_pickle(f'pickles/{subcorpus}_sub_df.tar.gz')
+        formatted_index = [
+            {'label': f"{text_helpers.TEXTS.loc[index]['Title']} ({index})", 'value': index}
+            for index in text_helpers.TEXTS.index
+        ]
+    elif component_id == 'search-box':
+        search_index = text_helpers.search_text(text_helpers.TEXTS, search_term)
+        formatted_index = [
+            {'label': f"{text_helpers.TEXTS.loc[index]['Title']} ({index})", 'value': index}
+            for index in search_index
+        ]
+    else:
+        formatted_index = []
+    return formatted_index
+
+@app.callback(
+    Output(component_id='search-box', component_property='value'),
+    Input(component_id='sub-corpus', component_property='value')
+)
+def reset_searchbox(sub_corpus):
+    return ''
 
 
 if __name__ == '__main__':

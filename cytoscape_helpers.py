@@ -1,12 +1,13 @@
 import dash
 import dash_core_components as dcc
 import dash_cytoscape as cyto
+import dash_table
 import dash_html_components as html
 
 import pandas as pd
 
 
-ALL_WORD_TERMS = [
+ALL_WORD_TERMS = sorted([
     'philosophy',
     'theology',
     'speculative',
@@ -18,10 +19,15 @@ ALL_WORD_TERMS = [
     'liberalism',
     'socialism',
     'stout',
-    'freethinker'
-]
+    'freethinker',
+    'transcendentalism',
+    'transcend',
+    'intellectual',
+    'institute',
+    'rangatira'
+])
 
-ENTITY_TERMS = [
+ENTITY_TERMS = sorted([
     'plato',
     'stout',
     'theosophy',
@@ -29,10 +35,26 @@ ENTITY_TERMS = [
     'canterbury college',
     'the new zealand institute',
     'the church',
-    'new zealand'
-]
+    'new zealand',
+    'salmond',
+    'stella',
+    'henderson',
+    'lady cook',
+    "mechanics' institute",
+    'philosophical institute',
+    'the philosophical society',
+    'positivism',
+    'dr macgregor',
+    'butler',
+    'robert elsmere',
+    'the temple of truth',
+    'rangatira',
+    'maoridom',
+    'maoriland',
+    'the native land court'
+])
 
-PROPN_TERMS = [
+PROPN_TERMS = sorted([
     'Besant',
     'Stout',
     'Vogel',
@@ -43,9 +65,17 @@ PROPN_TERMS = [
     'Darwin',
     'Hosking',
     'Worthington',
-    'Collins'
-]
+    'Collins',
+    'Cook',
+    'Stella',
+    'Henderson',
+    'Runanga',
+    'Frankland',
+    'Ideal',
+    'Philosopher'
+])
 
+# FIRST_TABLE = pd.read_pickle('pickles/cooc_BOW_all_df.tar.gz')
 
 def node_degree(name, edges):
     """Helper for generate_network. Returns degree of node given
@@ -110,8 +140,11 @@ def generate_network(rep, dict, term, stat, pri_cooc_num, sec_cooc_num):
 cooc_cytoscape = cyto.Cytoscape(
         id='cooccurence-network',
         minZoom=1,
+        maxZoom=10,
         layout={'name': 'cose'},
-        style={'width': '85%', 'height': '800px', 'margin': 'auto'},
+        style={'width': '85%', 'height': '800px',
+            'margin': 'auto', 'border-style': 'solid',
+            'margin-top': '10px'},
         elements=[],
         stylesheet=[
             {
@@ -154,7 +187,8 @@ cooc_tab = [
             {'label': 'Bag of Words', 'value': 'bow'},
             {'label': 'TF-IDF', 'value': 'tf-idf'}
         ],
-        value='bow'
+        value='bow',
+        style={'width': '40%'}
     ),
     html.P("Dictionary:"),
     dcc.Dropdown(
@@ -164,13 +198,15 @@ cooc_tab = [
             {'label': 'Proper nouns', 'value': 'propn'},
             {'label': 'Named entities', 'value': 'entities'}
         ],
-        value='all'
+        value='all',
+        style={'width': '40%'}
     ),
     html.P("Search Term (Precalulated Cooccurrences)"),
     dcc.Dropdown(
         id='term',
         options=[{'label': word, 'value': word} for word in ALL_WORD_TERMS],
-        value=ALL_WORD_TERMS[0]
+        value=ALL_WORD_TERMS[0],
+        style={'width': '40%'}
     ),
     html.P("Statistic:"),
     dcc.Dropdown(
@@ -179,7 +215,8 @@ cooc_tab = [
             {'label': 'Mutual information', 'value': 'ml'},
             {'label': 'Log Dice', 'value': 'log dice'}
         ],
-        value='ml'
+        value='ml',
+        style={'width': '40%'}
     ),
     html.P('Primary Cooccurences'),
     dcc.Slider(
@@ -194,7 +231,7 @@ cooc_tab = [
     dcc.Slider(
         id='secondary-coocs',
         min=1,
-        max=50,
+        max=15,
         step=1,
         value=5,
         marks = {n: f'{n}' for n in [i for i in range(1, 51) if i%5==0]}
@@ -202,3 +239,14 @@ cooc_tab = [
     html.Button('Submit', id='submit-val', n_clicks=0),
     cooc_cytoscape
     ]
+
+
+# cooc_table = [
+#     html.P('Allow exploration of all pregenerated cooccurrence results'),
+#     dash_table.DataTable(
+#         id='table',
+#         columns=[{"name": i, "id": i}
+#             for i in FIRST_TABLE.columns],
+#         data=FIRST_TABLE.to_dict('records'),
+#     )
+# ]
