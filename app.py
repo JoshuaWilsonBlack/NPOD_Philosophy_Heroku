@@ -70,36 +70,34 @@ def update_network(n_clicks, rep, dict, term, stat, pri_cooc_num, sec_cooc_num):
         rep, dict, term, stat, pri_cooc_num, sec_cooc_num
     )
 
+
 # Text display callbacks
 # Update the displayed text.
 @app.callback(
-    Output(component_id='text-box', component_property='srcDoc'),
+    Output(component_id='article-markdown', component_property='children'),
     Input(component_id='text-select', component_property='value'),
+    State(component_id='search-box', component_property='value')
 )
-def update_text(index):
-    return text_helpers.html_text(
+def update_text_dangerous(index, search):
+    if search == '':
+        boldface = None
+    else:
+        boldface = search
+    return text_helpers.text_as_markdown(
         index,
-        text_helpers.TEXTS
+        text_helpers.TEXTS,
+        boldface=boldface
     )
 
 
-# When corpus changes, load first doc
+
+# When corpus changes or search is made, load first doc
 @app.callback(
     Output(component_id='text-select', component_property='value'),
     Input(component_id='text-select', component_property='options')
 )
 def load_first_doc(indices):
     return indices[0]['value']
-
-# # Filter corpus by search term.
-# @app.callback(
-#     Output(component_id='text-select', component_property='options'),
-#     Input(component_id='search-box', component_property='value'),
-#     State(component_id='sub-corpus', component_property='value')
-# )
-# def search_corpus(search_string, corpus):
-#     options = text_helpers.search_text(text_helpers.TEXTS, search_string)
-#     return options
 
 
 

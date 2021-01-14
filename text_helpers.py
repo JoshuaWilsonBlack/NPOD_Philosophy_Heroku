@@ -1,5 +1,6 @@
 import html as python_html
 import re
+import pickle
 
 import dash
 import dash_core_components as dcc
@@ -8,75 +9,65 @@ import dash_html_components as html
 import pandas as pd
 
 TEXTS = pd.read_pickle('pickles/philoso_sub_df.tar.gz')
-
-text_style = """
-<style>
-h3, h4   {font-family: sans-serif;}
-p    {font-family: serif;}
-</style>
-"""
+with open('pickles/codes2names_web.pickle', 'rb') as fin:
+    CODES2NAMES_WEB = pickle.load(fin)
+with open('pickles/codes2names.pickle', 'rb') as fin:
+    CODES2NAMES = pickle.load(fin)
 
 
-# TO DO: Bring back search function
-def text_as_html(index):
-    """Given article index, return formatted using Dash html components."""
-    html_components = []
 
-    title = TEXTS.loc[index, 'Title']
-    html_components.append(html.H2(title))
+def escape_markdown(string):
+    """Escape characters which have functions in markdown strings.
+    Return escaped string."""
+
+    markdown_escape_chars = r"\`*_{}[]<>()#+-.!|"
+    for escape_char in markdown_escape_chars:
+        string = string.replace(escape_char, "\\"+escape_char)
+
+    return string
+
+
+
+def text_as_markdown(index, dataframe, boldface=None):
+    """Render article corresponding to index in dataframe as markdown
+    string. Any matches for boldface are rendered in bold.
+    """
 
     date = index[index.find('_')+1:index.find('_')+9]
     newspaper = index[0:index.find('_')]
-    html_components.append(html.H3(f"{newspaper}-{date}"))
 
-    text_blocks = TEXTS.loc[index, 'Text']
-    for block in text_blocks:
-        html_components.append(html.P(block))
+    title = (dataframe.loc[index, 'Title'])
+    title = escape_markdown(title)
 
-    return html_components
+    web_prefix = "https://paperspast.natlib.govt.nz/newspapers/"
+    year = date[0:4]
+    month = date[4:6]
+    day = date[6:8]
+    web_address = f"{web_prefix}{CODES2NAMES_WEB[newspaper]}/{year}/{month}/{day}"
 
-
-
-def html_text(index, dataframe, boldface=None):
-    """
-    Given article code, return html formatted text
-    containing both heading and body text. Optionally, boldface
-    matches of the boldface regex expression.
-    Assumes dataframe contains a 'Text' column containing lists of
-    strings as entries as well as 'Title', 'Newspaper' columns
-    containing strings and a 'Date' column containing integers.
-
-    I only escape html characters in the title and text. Newspaper and
-    data should not have any html in them. Leaving them unescaped
-    increases the chance of finding any such errors.
-    """
-    date = index[index.find('_')+1:index.find('_')+9]
-    newspaper = index[0:index.find('_')]
-    title = python_html.escape(dataframe.loc[index, 'Title'])
     text_blocks = dataframe.loc[index, 'Text']
     text = ''
     for block in text_blocks:
-        tagged_string = f'<p>{python_html.escape(block)}</p>'
-        text += tagged_string
+        paragraph = escape_markdown(block)
+        text += paragraph + '\n\n'
 
     if boldface:
         match = re.search(boldface, text)
         if match:
-            text = re.sub(boldface, f'<b>{match.group(0)}</b>', text)
+            text = re.sub(boldface, f'***{match.group(0)}***', text)
 
-    article_string = f"""
-<!DOCTYPE html>
-<html>
-<head>
-{text_style}
-</head>
-<body>
-<h3>{title}</h3>
-<h4>{newspaper} - {date}</h4>
-{text}'
+    markdown_text = f"""## {title}
+
+*{CODES2NAMES[newspaper]}*
+
+{day}/{month}/{year}
+
+[View issue on Papers Past]({web_address})
+
+{text}
 """
 
-    return article_string
+    return markdown_text
 
 
 
@@ -136,18 +127,10 @@ text_tab = [
         value=TEXTS.index[0],
         style={'width': '70%'}
     ),
-    html.Div(
-        id = 'text-display',
-        children=html.Iframe(
-            id='text-box',
-            sandbox='',
-            srcDoc=html_text(TEXTS.index[0], TEXTS, boldface='the'),
-            style={'width': '90%',
-                'height': '1000px',
-                'border': '0px',
-                'padding': '40px'}
-            ),
-        style={'width': '100%',
-            'padding-left': '40px'}
+    dcc.Markdown(
+        id = 'article-markdown',
+        children = text_as_markdown(TEXTS.index[0], TEXTS, boldface='the'),
+        style={'width': '70%',
+            'padding': '50px'}
     )
 ]
