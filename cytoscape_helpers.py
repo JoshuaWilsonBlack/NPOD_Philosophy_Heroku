@@ -6,76 +6,47 @@ import dash_html_components as html
 
 import pandas as pd
 
+import search_terms
 
-ALL_WORD_TERMS = sorted([
-    'philosophy',
-    'theology',
-    'speculative',
-    'ethics',
-    'metaphysics',
-    'theosophy',
-    'materialism',
-    'idealism',
-    'liberalism',
-    'socialism',
-    'stout',
-    'freethinker',
-    'transcendentalism',
-    'transcend',
-    'intellectual',
-    'institute',
-    'rangatira'
-])
 
-ENTITY_TERMS = sorted([
-    'plato',
-    'stout',
-    'theosophy',
-    'university',
-    'canterbury college',
-    'the new zealand institute',
-    'the church',
-    'new zealand',
-    'salmond',
-    'stella',
-    'henderson',
-    'lady cook',
-    "mechanics' institute",
-    'philosophical institute',
-    'the philosophical society',
-    'positivism',
-    'dr macgregor',
-    'butler',
-    'robert elsmere',
-    'the temple of truth',
-    'rangatira',
-    'maoridom',
-    'maoriland',
-    'the native land court'
-])
 
-PROPN_TERMS = sorted([
-    'Besant',
-    'Stout',
-    'Vogel',
-    'Plato',
-    'Aristotle',
-    'Spencer',
-    'Carlyle',
-    'Darwin',
-    'Hosking',
-    'Worthington',
-    'Collins',
-    'Cook',
-    'Stella',
-    'Henderson',
-    'Runanga',
-    'Frankland',
-    'Ideal',
-    'Philosopher'
-])
+STYLESHEET = [
+    {
+        'selector': 'edge',
+        'style': {
+            'width': 'mapData(weight, 3, 6, 1, 3)',
+            'line-color': 'silver'
+        }
+    },
+    {
+        'selector': 'node',
+        'style': {
+            'content': 'data(label)',
+            'width': 'mapData(size, 1, 10, 10, 20)',
+            'height': 'mapData(size, 1, 10, 10, 20)'
+        }
+    },
+    {
+        'selector': 'label',
+        'style': {
+            'font-size': 6,
+            'text-valign': 'center',
+            'text-background-color': 'white',
+            'text-background-opacity': 0.6,
+            'text-background-padding': 1,
+            'text-border-color': 'black',
+            'text-border-opacity': 1,
+            'text-border-width': 0.5
+        }
+    }
+]
 
-# FIRST_TABLE = pd.read_pickle('pickles/cooc_BOW_all_df.tar.gz')
+
+
+def preloaded_search_terms(dict_type, corpus):
+    return search_terms.search_terms[f'{corpus}{dict_type}']
+
+
 
 def node_degree(name, edges):
     """Helper for generate_network. Returns degree of node given
@@ -88,14 +59,14 @@ def node_degree(name, edges):
 
 
 
-def generate_network(rep, dict, term, stat, pri_cooc_num, sec_cooc_num):
+def generate_network(corpus, rep, dict, term, stat, pri_cooc_num, sec_cooc_num):
     """Produce network list from precalulated results,
     given input from cooccurence tab."""
     nodes = []
     node_names = set([term])
     edges = []
 
-    cooc_df = pd.read_pickle(f'pickles/cooc_{rep.upper()}_{dict}_df.tar.gz')
+    cooc_df = pd.read_pickle(f'pickles/cooc_{corpus}{rep.upper()}_{dict}_df.tar.gz')
 
     primary_coocs = {
         cooc_df.loc[f'{term}_{stat}'][f'Term {i}']: cooc_df.loc[f'{term}_{stat}'][f'Score {i}']
@@ -137,8 +108,20 @@ def generate_network(rep, dict, term, stat, pri_cooc_num, sec_cooc_num):
     return network
 
 
+
+def change_cytoscape_width(stat_choice):
+    if stat_choice == 'mi':
+        min = 3
+        max = 6
+    elif stat_choice == 'log dice':
+        min = -2
+        max = 2
+    STYLESHEET[0]['style']['width'] = f'mapData(weight, {min}, {max}, 1, 5)'
+    return STYLESHEET
+
+
 cooc_cytoscape = cyto.Cytoscape(
-        id='cooccurence-network',
+        id='cooccurrence-network',
         minZoom=1,
         maxZoom=10,
         layout={'name': 'cose'},
@@ -179,7 +162,19 @@ cooc_cytoscape = cyto.Cytoscape(
     )
 
 
+
 cooc_tab = [
+    html.P("Corpus:"),
+    dcc.Dropdown(
+        id='corpus-select',
+        options=[
+            {'label': 'Philoso*', 'value': ''},
+            {'label': 'Naive Bayes 2', 'value': 'nb2_v2_'},
+            {'label': 'Religion-Science', 'value': 'rel_v2_'}
+        ],
+        value='',
+        style={'width': '40%'}
+    ),
     html.P("Document representation:"),
     dcc.Dropdown(
         id='rep',
@@ -204,18 +199,18 @@ cooc_tab = [
     html.P("Search Term (Precalulated Cooccurrences)"),
     dcc.Dropdown(
         id='term',
-        options=[{'label': word, 'value': word} for word in ALL_WORD_TERMS],
-        value=ALL_WORD_TERMS[0],
+        options=[{'label': word, 'value': word} for word in search_terms.search_terms['all']],
+        value=search_terms.search_terms['all'][0],
         style={'width': '40%'}
     ),
     html.P("Statistic:"),
     dcc.Dropdown(
         id='stat-choice',
         options=[
-            {'label': 'Mutual information', 'value': 'ml'},
+            {'label': 'Mutual information', 'value': 'mi'},
             {'label': 'Log Dice', 'value': 'log dice'}
         ],
-        value='ml',
+        value='mi',
         style={'width': '40%'}
     ),
     html.P('Primary Cooccurences'),
@@ -239,14 +234,3 @@ cooc_tab = [
     html.Button('Submit', id='submit-val', n_clicks=0),
     cooc_cytoscape
     ]
-
-
-# cooc_table = [
-#     html.P('Allow exploration of all pregenerated cooccurrence results'),
-#     dash_table.DataTable(
-#         id='table',
-#         columns=[{"name": i, "id": i}
-#             for i in FIRST_TABLE.columns],
-#         data=FIRST_TABLE.to_dict('records'),
-#     )
-# ]

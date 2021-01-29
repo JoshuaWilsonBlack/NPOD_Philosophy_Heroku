@@ -105,7 +105,8 @@ text_tab = [
         options=[
             {'label': 'Keyword search ("philoso*")', 'value': 'philoso'},
             {'label': 'Naive Bayes 1', 'value': 'nb1'},
-            {'label': 'Naive Bayes 2', 'value': 'nb2'}
+            {'label': 'Naive Bayes 2', 'value': 'nb2_v2'},
+            {'label': 'Religion-Science', 'value': 'rel_v2'}
         ],
         value='philoso',
         style={'width': '70%'}
