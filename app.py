@@ -75,7 +75,7 @@ def update_network(n_clicks, corpus, rep, dict, term, stat, pri_cooc_num, sec_co
     elements = cytoscape_helpers.generate_network(
         corpus, rep, dict, term, stat, pri_cooc_num, sec_cooc_num
     )
-    style = cytoscape_helpers.change_cytoscape_width(stat)
+    style = cytoscape_helpers.change_cytoscape_width(stat, rep)
     return elements, style
 
 

@@ -109,13 +109,21 @@ def generate_network(corpus, rep, dict, term, stat, pri_cooc_num, sec_cooc_num):
 
 
 
-def change_cytoscape_width(stat_choice):
+def change_cytoscape_width(stat_choice, rep):
     if stat_choice == 'mi':
-        min = 3
-        max = 6
+        if rep == 'bow':
+            min = 3
+            max = 6
+        elif rep == 'tf-idf':
+            min = 3
+            max = 7
     elif stat_choice == 'log dice':
-        min = -2
-        max = 2
+        if rep == 'bow':
+            min = -2
+            max = 2
+        elif rep == 'tf-idf':
+            min = -5
+            max = -1
     STYLESHEET[0]['style']['width'] = f'mapData(weight, {min}, {max}, 1, 5)'
     return STYLESHEET
 
