@@ -155,6 +155,34 @@ rel_all = sorted([
     'warfare'
 ])
 
+rel_all_un = sorted([
+    'philosophy',
+    'theology',
+    'evolutionary', #
+    'darwin',
+    'huxley',
+    'conflict',
+    'priestcraft',
+    'ancestor',
+    'primate',
+    'monkey',
+    'lower',
+    'design',
+    'designed',
+    'heretic',
+    'heresy',
+    'creation',
+    'creator', # Perhaps I should have stemmed these?
+    'warfare',
+    'evolution',
+    'genesis',
+    'human',
+    'materialism',
+    'theosophy',
+    'salmond',
+    'parker'
+])
+
 rel_propn = sorted([
     'Darwin',
     'Huxley',
@@ -191,6 +219,7 @@ search_terms = {
     'nb2_v2_entities': nb2_entities,
     'nb2_v2_propn': nb2_propn,
     'rel_v2_all': rel_all,
+    'rel_v2_all_un': rel_all_un,
     'rel_v2_entities': rel_entities,
     'rel_v2_propn': rel_propn
 }

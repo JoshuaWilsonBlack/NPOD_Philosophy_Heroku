@@ -44,18 +44,36 @@ app.layout = html.Div([
 # Cooccurrence callbacks.
 # Change preloaded search terms given dictionary or corpus change choice
 @app.callback(
-    Output(component_id='term', component_property='options'),
-    Input(component_id='dictionary', component_property='value'),
-    Input(component_id='corpus-select', component_property='value')
+    [Output(component_id='term', component_property='options'),
+    Output(component_id='dictionary', component_property='options')],
+    [Input(component_id='dictionary', component_property='value'),
+    Input(component_id='corpus-select', component_property='value')]
 )
-def return_terms(dict_type, corpus):
+def return_terms_and_opts(dict_type, corpus):
     """
     Given the type of dictionary required (string) for a
     collocation network, return the precalculated options (list).
     """
     words = cytoscape_helpers.preloaded_search_terms(dict_type, corpus)
     formatted_words = [{'label': word, 'value': word} for word in words]
-    return formatted_words
+
+    # update options for dictionary choice if corpus is Rel corpus
+    default_dict_options = [
+        {'label': 'All', 'value': 'all'},
+        {'label': 'Proper nouns', 'value': 'propn'},
+        {'label': 'Named entities', 'value': 'entities'}
+    ]
+    if corpus == 'rel_v2_':
+        dict_options = [
+            {'label': 'All (filtered)', 'value': 'all'},
+            {'label': 'All (unfiltered)', 'value': 'all_un'},
+            {'label': 'Proper nouns', 'value': 'propn'},
+            {'label': 'Named entities', 'value': 'entities'}
+        ]
+    else:
+        dict_options = default_dict_options
+
+    return formatted_words, dict_options
 
 
 # Function on press submit, to change cooccurrence network.
