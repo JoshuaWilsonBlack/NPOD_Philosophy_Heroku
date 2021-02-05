@@ -14,3 +14,14 @@ Code for this dashboard is available at <https://github.com/JoshuaDavidBlack/NPO
 
 **Note:** this page contains terms, and charts relationships between terms, from the text of nineteenth century newspapers using various statistical learning methods. As such, it is likely to contain offensive material.
 """
+
+cytoscape_explainer = """
+The following controls are available for constructing co-occurrence networks:
+
+* **Corpus**: select which of the corpora produced as part of the project you want to investigate. 'Naive Bayes 2' is the final general philosophy corpus, and 'Religion Science' is a corpus produced by extracting articles about the relationship between religion and science from the Naive Bayes 2 corpus.
+* **Document representation**: represent articles as either bags of words (a count for each word in the dictionary), or with the TF-IDF transformation (where words are scaled on the basis of their prevalence in the corpus). TF-IDF reduces the salience of common words.
+* **Search term**: select a search term for which co-occurrences have been precalculated.
+* **Statistic**: select a way to calculate the significance of co-occurrences. Options are mutual information, which quantifies how much information about the appearance of the other co-occurrence is given by the appearance of the search term. Log Dice is similar, but takes less account of the number of distinct documents a word appears in. It was designed with lexicographers in mind.
+* **Primary co-occurrences**: the number of co-occurring terms for the search term which will appear in the network.
+* **Secondary co-occurrences**: the number of co-occurring terms of each of the primary co-occurrences to be added to the network (they may already be on it).
+"""

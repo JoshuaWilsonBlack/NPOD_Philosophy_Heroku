@@ -7,7 +7,7 @@ import dash_html_components as html
 import pandas as pd
 
 import search_terms
-
+import text_content
 
 
 STYLESHEET = [
@@ -172,6 +172,11 @@ cooc_cytoscape = cyto.Cytoscape(
 
 
 cooc_tab = [
+    dcc.Markdown(
+        id = 'cyto-explainer',
+        children = text_content.cytoscape_explainer,
+        style={'width': '80%',
+            'padding': '50px'}),
     html.P("Corpus:"),
     dcc.Dropdown(
         id='corpus-select',
