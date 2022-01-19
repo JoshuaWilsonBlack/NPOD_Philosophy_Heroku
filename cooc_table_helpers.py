@@ -1,7 +1,7 @@
 import dash
-import dash_core_components as dcc
-import dash_table
-import dash_html_components as html
+from dash import dash_table
+from dash import html
+from dash import dcc
 
 import pandas as pd
 
@@ -15,7 +15,13 @@ def return_cooc_df(corpus, dict, term, rep, stat):
     )
     term_df = pd.DataFrame(columns=['Term', 'Score'])
     coocs = cooc_df.loc[term+f'_{stat}']
-    for i in range(50):
+
+    if corpus == "cc_3_":
+        num_coocs = 200
+    else:
+        num_coocs = 50
+
+    for i in range(num_coocs):
         term_df.loc[i+1] = (coocs.loc[f'Term {i}'], coocs.loc[f'Score {i}'])
 
     return term_df
@@ -31,20 +37,22 @@ def load_search_terms(corpus, dict, rep, stat):
 
 
 # To get running
-df = return_cooc_df('', 'all', 'philosophy', 'bow', 'mi')
-terms = load_search_terms('', 'all', 'bow', 'mi')
+df = return_cooc_df('cc_3_', 'all', 'philosophy', 'bow', 'mi')
+terms = load_search_terms('cc_3_', 'all', 'bow', 'mi')
 
 cooc_table_tab = [
-    html.P('This tab shows top-50 cooccurrence results for every term for which they have been pre-calculated.'),
+    html.P('This tab displays the top cooccurrence results for each term.'),
     html.P("Corpus:"),
     dcc.Dropdown(
         id='table-corpus-select',
         options=[
-            {'label': 'Philoso*', 'value': ''},
-            {'label': 'Naive Bayes 2', 'value': 'nb2_v2_'},
-            {'label': 'Religion-Science', 'value': 'rel_v2_'}
+            {'label': 'Candidate Corpus 0', 'value': 'cc_0_'},
+            {'label': 'Candidate Corpus 2', 'value': 'cc_2_'},
+            {'label': 'Iteration 2 Religion Science Subcorpus',
+                'value': 'rel_v2_'},
+            {'label': 'Final Corpus', 'value': 'cc_3_'}
         ],
-        value='',
+        value='cc_3_',
         style={'width': '40%'}
     ),
     html.P("Document representation:"),
@@ -54,7 +62,7 @@ cooc_table_tab = [
             {'label': 'Bag of Words', 'value': 'bow'},
             {'label': 'TF-IDF', 'value': 'tf-idf'}
         ],
-        value='bow',
+        value='tf-idf',
         style={'width': '40%'}
     ),
     html.P("Dictionary:"),
@@ -72,7 +80,7 @@ cooc_table_tab = [
     dcc.Dropdown(
         id='table-term',
         options=[{'label': word, 'value': word} for word in terms],
-        value=terms[0],
+        value='reason',
         style={'width': '40%'}
     ),
     html.P("Statistic:"),
@@ -80,9 +88,9 @@ cooc_table_tab = [
         id='table-stat-choice',
         options=[
             {'label': 'Mutual information', 'value': 'mi'},
-            {'label': 'Log Dice', 'value': 'log dice'}
+            {'label': 'Log Dice', 'value': 'ld'}
         ],
-        value='mi',
+        value='ld',
         style={'width': '40%'}
     ),
     html.Button(

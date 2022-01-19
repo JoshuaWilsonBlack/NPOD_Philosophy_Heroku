@@ -212,12 +212,12 @@ rel_entities = sorted([
 
 
 search_terms = {
-    'all': philoso_all,
-    'entities': philoso_entities,
-    'propn': philoso_propn,
-    'nb2_v2_all': nb2_all,
-    'nb2_v2_entities': nb2_entities,
-    'nb2_v2_propn': nb2_propn,
+    'cc_0_all': philoso_all,
+    'cc_0_entities': philoso_entities,
+    'cc_0_propn': philoso_propn,
+    'cc_2_all': nb2_all,
+    'cc_2_entities': nb2_entities,
+    'cc_2_propn': nb2_propn,
     'rel_v2_all': rel_all,
     'rel_v2_all_un': rel_all_un,
     'rel_v2_entities': rel_entities,

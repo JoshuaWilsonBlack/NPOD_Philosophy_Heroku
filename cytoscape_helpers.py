@@ -1,8 +1,8 @@
 import dash
-import dash_core_components as dcc
 import dash_cytoscape as cyto
-import dash_table
-import dash_html_components as html
+from dash import dash_table
+from dash import dcc
+from dash import html
 
 import pandas as pd
 
@@ -44,7 +44,15 @@ STYLESHEET = [
 
 
 def preloaded_search_terms(dict_type, corpus):
-    return search_terms.search_terms[f'{corpus}{dict_type}']
+    """For the final corpus all terms have had their collocations generated.
+    For the previous corpora, terms are loaded from a hand written list."""
+
+    if corpus == "cc_3_":
+        term_list = list(pd.read_pickle('pickles/cc3_dictionary.tar.gz'))
+    else:
+        term_list = search_terms.search_terms[f'{corpus}{dict_type}']
+
+    return term_list
 
 
 
@@ -112,19 +120,42 @@ def generate_network(corpus, rep, dict, term, stat, pri_cooc_num, sec_cooc_num):
 def change_cytoscape_width(stat_choice, rep):
     if stat_choice == 'mi':
         if rep == 'bow':
-            min = 3
-            max = 6
+            min_weight = 3
+            max_weight = 6
         elif rep == 'tf-idf':
-            min = 3
-            max = 7
-    elif stat_choice == 'log dice':
+            min_weight = 3
+            max_weight = 7
+    elif stat_choice == 'ld':
         if rep == 'bow':
-            min = -2
-            max = 2
+            min_weight = -2
+            max_weight = 2
         elif rep == 'tf-idf':
-            min = -5
-            max = -1
-    STYLESHEET[0]['style']['width'] = f'mapData(weight, {min}, {max}, 1, 5)'
+            min_weight = 7
+            max_weight = 7.5
+    STYLESHEET[0]['style']['width'] = f'mapData(weight, {min_weight}, {max_weight}, 1, 5)'
+    return STYLESHEET
+
+
+
+def change_cytoscape_width_auto(elements):
+    """Scales the edge weights depending on score."""
+
+    weights = []
+
+    for dict in elements:
+        try:
+            weights.append(dict['data']['weight'])
+        except KeyError:
+            pass
+
+    min_weight = min(weights)
+    max_weight = max(weights)
+
+    # Cludge: want to avoid fake differences when all weights clustered together.
+    if abs(max_weight-min_weight) < 2:
+        min_weight = max_weight - 2
+
+    STYLESHEET[0]['style']['width'] = f'mapData(weight, {min_weight}, {max_weight}, 1, 5)'
     return STYLESHEET
 
 
@@ -141,7 +172,7 @@ cooc_cytoscape = cyto.Cytoscape(
             {
                 'selector': 'edge',
                 'style': {
-                    'width': 'mapData(weight, 3, 6, 1, 3)',
+                    'width': 'mapData(weight, 7, 7.5, 1, 3)',
                     'line-color': 'silver'
                 }
             },
@@ -181,11 +212,13 @@ cooc_tab = [
     dcc.Dropdown(
         id='corpus-select',
         options=[
-            {'label': 'Philoso*', 'value': ''},
-            {'label': 'Naive Bayes 2', 'value': 'nb2_v2_'},
-            {'label': 'Religion-Science', 'value': 'rel_v2_'}
+            {'label': 'Candidate Corpus 0', 'value': 'cc_0_'},
+            {'label': 'Candidate Corpus 2', 'value': 'cc_2_'},
+            {'label': 'Iteration 2 Religion Science Subcorpus',
+                'value': 'rel_v2_'},
+            {'label': 'Final Corpus', 'value': 'cc_3_'}
         ],
-        value='',
+        value='cc_3_',
         style={'width': '40%'}
     ),
     html.P("Document representation:"),
@@ -195,16 +228,14 @@ cooc_tab = [
             {'label': 'Bag of Words', 'value': 'bow'},
             {'label': 'TF-IDF', 'value': 'tf-idf'}
         ],
-        value='bow',
+        value='tf-idf',
         style={'width': '40%'}
     ),
     html.P("Dictionary:"),
     dcc.Dropdown(
         id='dictionary',
         options=[
-            {'label': 'All', 'value': 'all'},
-            {'label': 'Proper nouns', 'value': 'propn'},
-            {'label': 'Named entities', 'value': 'entities'}
+            {'label': 'Word list (with corpus proper nouns)', 'value': 'all'}
         ],
         value='all',
         style={'width': '40%'}
@@ -212,8 +243,8 @@ cooc_tab = [
     html.P("Search Term (Precalulated Cooccurrences)"),
     dcc.Dropdown(
         id='term',
-        options=[{'label': word, 'value': word} for word in search_terms.search_terms['all']],
-        value=search_terms.search_terms['all'][0],
+        options=[{'label': word, 'value': word} for word in preloaded_search_terms('all', 'cc_3_')],
+        value='reason',
         style={'width': '40%'}
     ),
     html.P("Statistic:"),
@@ -221,9 +252,9 @@ cooc_tab = [
         id='stat-choice',
         options=[
             {'label': 'Mutual information', 'value': 'mi'},
-            {'label': 'Log Dice', 'value': 'log dice'}
+            {'label': 'Log Dice', 'value': 'ld'}
         ],
-        value='mi',
+        value='ld',
         style={'width': '40%'}
     ),
     html.P('Primary Cooccurences'),
@@ -232,7 +263,7 @@ cooc_tab = [
         min=1,
         max=50,
         step=1,
-        value=15,
+        value=20,
         marks = {n: f'{n}' for n in [i for i in range(1, 51) if i%5==0]}
     ),
     html.P('Secondary Cooccurences'),
@@ -241,7 +272,7 @@ cooc_tab = [
         min=1,
         max=15,
         step=1,
-        value=5,
+        value=10,
         marks = {n: f'{n}' for n in [i for i in range(1, 51) if i%5==0]}
     ),
     html.Button('Submit', id='submit-val', n_clicks=0),

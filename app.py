@@ -1,8 +1,8 @@
 import dash
-import dash_core_components as dcc
 import dash_cytoscape as cyto
-import dash_html_components as html
 from dash.dependencies import Input, Output, State
+from dash import html
+from dash import dcc
 
 import pandas as pd
 
@@ -15,19 +15,13 @@ external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
-app.title = 'Philosophical Discourse in Early New Zealand Newspapers'
+app.title = 'Philosophical Contestation in Early New Zealand Newspapers'
 
 server = app.server
-
-
 
 app.layout = html.Div([
     dcc.Markdown(children=text_content.opening_text),
     dcc.Tabs([
-        dcc.Tab(
-            label='View Texts',
-            children=text_helpers.text_tab
-            ),
         dcc.Tab(
             label='Cooccurrence Networks',
             children=cytoscape_helpers.cooc_tab
@@ -38,6 +32,10 @@ app.layout = html.Div([
         dcc.Tab(
             label='Cooccurrence Tables',
             children=cooc_table_helpers.cooc_table_tab
+        ),
+        dcc.Tab(
+            label='View Texts',
+            children=text_helpers.text_tab
         )
     ])
 ])
@@ -70,6 +68,10 @@ def return_terms_and_opts(dict_type, corpus):
             {'label': 'Proper nouns', 'value': 'propn'},
             {'label': 'Named entities', 'value': 'entities'}
         ]
+    elif corpus == 'cc_3_':
+        dict_options = [
+            {'label': 'Word list supplemented with proper nouns', 'value': 'all'}
+        ]
     else:
         dict_options = default_dict_options
 
@@ -93,7 +95,8 @@ def update_network(n_clicks, corpus, rep, dict, term, stat, pri_cooc_num, sec_co
     elements = cytoscape_helpers.generate_network(
         corpus, rep, dict, term, stat, pri_cooc_num, sec_cooc_num
     )
-    style = cytoscape_helpers.change_cytoscape_width(stat, rep)
+    # style = cytoscape_helpers.change_cytoscape_width(stat, rep)
+    style = cytoscape_helpers.change_cytoscape_width_auto(elements)
     return elements, style
 
 

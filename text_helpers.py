@@ -3,12 +3,12 @@ import re
 import pickle
 
 import dash
-import dash_core_components as dcc
-import dash_html_components as html
+from dash import dcc
+from dash import html
 
 import pandas as pd
 
-TEXTS = pd.read_pickle('pickles/philoso_sub_df.tar.gz')
+TEXTS = pd.read_pickle('pickles/cc_3_sub_df.tar.gz')
 with open('pickles/codes2names_web.pickle', 'rb') as fin:
     CODES2NAMES_WEB = pickle.load(fin)
 with open('pickles/codes2names.pickle', 'rb') as fin:
@@ -103,12 +103,13 @@ text_tab = [
     dcc.Dropdown(
         id='sub-corpus',
         options=[
-            {'label': 'Keyword search ("philoso*")', 'value': 'philoso'},
-            {'label': 'Naive Bayes 1', 'value': 'nb1'},
-            {'label': 'Naive Bayes 2', 'value': 'nb2_v2'},
-            {'label': 'Religion-Science', 'value': 'rel_v2'}
+            {'label': 'Iteration 0', 'value': 'cc_0_'},
+            {'label': 'Iteration 1', 'value': 'cc_1_'},
+            {'label': 'Iteration 2', 'value': 'cc_2_'},
+            {'label': 'Iteration 2: Religion-Science', 'value': 'rel_v2'},
+            {'label': 'Final Corpus', 'value': 'cc_3_'},
         ],
-        value='philoso',
+        value='cc_3_',
         style={'width': '70%'}
     ),
     html.P('Filter by search term (regex)'),

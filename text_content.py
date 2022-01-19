@@ -1,14 +1,14 @@
 opening_text = """
-# Investigating Philosophical Discourse in Early New Zealand Newspapers
-## DATA601 Summer Project (UC Arts Digital Lab)
-Joshua Black
-black.joshuad@gmail.com
+# Philosophical Contestation in Early New Zealand Newspapers
+Joshua Black \n
+_University of Canterbury_ \n
+<joshua.black@canterbury.ac.nz> \n
+<black.joshuad@gmail.com>
 
-This dashboard allows for the inspection of a random subset of the main corpora developed in course of the project and for the generation and inspection of co-occurrence networks of key terms in the corpora.
 
-The full general philosophy corpus and religion-science corpus are availble for download as zip files containing the articles in markdown format: (add links)
+This dashboard allows for the inspection of a random subset of the main corpora developed in course of the project and for the generation and inspection of co-occurrence networks of key terms in the final corpora.
 
-The corpora, and labelled dataset used for training classifiers, are also available as pickled pandas dataframes along with almost all other project files and got at the project's [GitHub page](https://github.com/JoshuaDavidBlack/NPOD_Philosophy).
+The general method of corpus construction is presented at <https://github.com/JoshuaDavidBlack/newspaper-philosophy-methods>. A paper is in preparation describing the method in more detail.
 
 Code for this dashboard is available at <https://github.com/JoshuaDavidBlack/NPOD_Philosophy>.
 
@@ -18,15 +18,11 @@ Code for this dashboard is available at <https://github.com/JoshuaDavidBlack/NPO
 cytoscape_explainer = """
 The following controls are available for constructing co-occurrence networks:
 
-* **Corpus**: select which of the corpora produced as part of the project you want to investigate. 'Naive Bayes 2' is the final general philosophy corpus, and 'Religion Science' is a corpus produced by extracting articles about the relationship between religion and science from the Naive Bayes 2 corpus.
 * **Document representation**: represent articles as either bags of words (a count for each word in the dictionary), or with the TF-IDF transformation (where words are scaled on the basis of their prevalence in the corpus). TF-IDF reduces the salience of common words.
-* **Dictionary**: Different dictionaries have been used to limit the number of words which have to be considered. Options are:
-    * All (filtered): tokens filtered by NLTK words.words() wordlist (basically: a large spell checker database of English words),
-    * All (unfiltered): tokens sent to dictionary construction without filtering (only available for Religion Science corpus).
-    * Entities: Named enstities extracted by spaCy are passed to the dictionary generator instead of the tokenised text.
-    * Proper nouns: Proper nouns as extracted by spaCy are passed to the dictionary generator instead of the tokenised text.
 * **Search term**: select a search term for which co-occurrences have been precalculated.
-* **Statistic**: select a way to calculate the significance of co-occurrences. Options are mutual information, which quantifies how much information about the appearance of the other co-occurrence is given by the appearance of the search term. Log Dice is similar, but takes less account of the number of distinct documents a word appears in. It was designed with lexicographers in mind.
+* **Statistic**: select a way to calculate the significance of co-occurrences. Options are mutual information, which quantifies how much information about the appearance of the other co-occurrence is given by the appearance of the search term. Log Dice is similar, but does not vary with corpus size.
 * **Primary co-occurrences**: the number of co-occurring terms for the search term which will appear in the network.
 * **Secondary co-occurrences**: the number of co-occurring terms of each of the primary co-occurrences to be added to the network (they may already be on it).
+
+Line thickness represents relative strength of relationship of _within_ a network but should not be used for comparisons across networks.
 """
