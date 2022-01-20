@@ -2,6 +2,7 @@ import dash
 from dash import dash_table
 from dash import html
 from dash import dcc
+import dash_bootstrap_components as dbc
 
 import pandas as pd
 
@@ -37,10 +38,10 @@ def load_search_terms(corpus, dict, rep, stat):
 
 
 # To get running
-df = return_cooc_df('cc_3_', 'all', 'philosophy', 'bow', 'mi')
+df = return_cooc_df('cc_3_', 'all', 'reason', 'tf-idf', 'ld')
 terms = load_search_terms('cc_3_', 'all', 'bow', 'mi')
 
-cooc_table_tab = [
+cooc_table_control_panel = [
     html.P('This tab displays the top cooccurrence results for each term.'),
     html.P("Corpus:"),
     dcc.Dropdown(
@@ -53,7 +54,7 @@ cooc_table_tab = [
             {'label': 'Final Corpus', 'value': 'cc_3_'}
         ],
         value='cc_3_',
-        style={'width': '40%'}
+        style={'width': '80%'}
     ),
     html.P("Document representation:"),
     dcc.Dropdown(
@@ -63,7 +64,7 @@ cooc_table_tab = [
             {'label': 'TF-IDF', 'value': 'tf-idf'}
         ],
         value='tf-idf',
-        style={'width': '40%'}
+        style={'width': '80%'}
     ),
     html.P("Dictionary:"),
     dcc.Dropdown(
@@ -74,14 +75,14 @@ cooc_table_tab = [
             {'label': 'Named entities', 'value': 'entities'}
         ],
         value='all',
-        style={'width': '40%'}
+        style={'width': '80%'}
     ),
     html.P("Search Term (Precalulated Cooccurrences)"),
     dcc.Dropdown(
         id='table-term',
         options=[{'label': word, 'value': word} for word in terms],
         value='reason',
-        style={'width': '40%'}
+        style={'width': '80%'}
     ),
     html.P("Statistic:"),
     dcc.Dropdown(
@@ -91,14 +92,16 @@ cooc_table_tab = [
             {'label': 'Log Dice', 'value': 'ld'}
         ],
         value='ld',
-        style={'width': '40%'}
+        style={'width': '80%'}
     ),
     html.Button(
         'Submit',
         id='table-submit-val',
         n_clicks=0,
         style={'margin': '10px'}),
-    dash_table.DataTable(
+]
+
+cooc_table = dash_table.DataTable(
         id='cooc-table',
         columns=[{"name": i, "id": i}
             for i in ['Term', 'Score']
@@ -109,5 +112,27 @@ cooc_table_tab = [
             'textAlign': 'left',
             'fontSize': '12px'
         },
+    )
+
+cooc_table_tab = [
+    dbc.Row(
+        [
+            dbc.Col(
+                html.Div(
+                    cooc_table_control_panel,
+                    style={'padding': '50px'}
+                ),
+                md = 4,
+                width = 12
+            ),
+            dbc.Col(
+                html.Div(
+                    cooc_table,
+                    style={'padding': '50px'}
+                ),
+                md = 8,
+                width = 12
+            )
+        ]
     )
 ]

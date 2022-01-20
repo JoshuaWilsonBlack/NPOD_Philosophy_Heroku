@@ -15,8 +15,7 @@ Code for this dashboard is available at <https://github.com/JoshuaDavidBlack/NPO
 **Note:** this page contains terms, and charts relationships between terms, from the text of nineteenth century newspapers using various statistical learning methods. As such, it is likely to contain offensive material.
 """
 
-cytoscape_explainer = """
-The following controls are available for constructing co-occurrence networks:
+cytoscape_explainer = """The following controls are available for constructing co-occurrence networks:
 
 * **Document representation**: represent articles as either bags of words (a count for each word in the dictionary), or with the TF-IDF transformation (where words are scaled on the basis of their prevalence in the corpus). TF-IDF reduces the salience of common words.
 * **Search term**: select a search term for which co-occurrences have been precalculated.

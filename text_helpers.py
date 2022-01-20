@@ -99,40 +99,45 @@ def search_text(dataframe, re_string, lower=False):
 
 
 text_tab = [
-    html.P('Select sub-corpus (random sample of 500 articles)'),
-    dcc.Dropdown(
-        id='sub-corpus',
-        options=[
-            {'label': 'Iteration 0', 'value': 'cc_0_'},
-            {'label': 'Iteration 1', 'value': 'cc_1_'},
-            {'label': 'Iteration 2', 'value': 'cc_2_'},
-            {'label': 'Iteration 2: Religion-Science', 'value': 'rel_v2'},
-            {'label': 'Final Corpus', 'value': 'cc_3_'},
+    html.Div(
+        [
+            html.P('Select sub-corpus (random sample of 500 articles)'),
+            dcc.Dropdown(
+                id='sub-corpus',
+                options=[
+                    {'label': 'Iteration 0', 'value': 'cc_0_'},
+                    {'label': 'Iteration 1', 'value': 'cc_1_'},
+                    {'label': 'Iteration 2', 'value': 'cc_2_'},
+                    {'label': 'Iteration 2: Religion-Science', 'value': 'rel_v2'},
+                    {'label': 'Final Corpus', 'value': 'cc_3_'},
+                ],
+                value='cc_3_',
+                style={'width': '70%'}
+            ),
+            html.P('Filter by search term (regex)'),
+            dcc.Input(
+                id='search-box',
+                value='',
+                type='search',
+                style={'width': '50%'}
+            ),
+            html.P('Select text'),
+            dcc.Dropdown(
+                id='text-select',
+                options=[
+                    {'label': f"{TEXTS.loc[index]['Title']} ({index})", 'value': index}
+                    for index in TEXTS.index
+                ],
+                value=TEXTS.index[0],
+                style={'width': '70%'}
+            ),
+            dcc.Markdown(
+                id = 'article-markdown',
+                children = text_as_markdown(TEXTS.index[0], TEXTS, boldface='the'),
+                style={'width': '70%',
+                    'padding': '50px'}
+            )
         ],
-        value='cc_3_',
-        style={'width': '70%'}
-    ),
-    html.P('Filter by search term (regex)'),
-    dcc.Input(
-        id='search-box',
-        value='',
-        type='search',
-        style={'width': '50%'}
-    ),
-    html.P('Select text'),
-    dcc.Dropdown(
-        id='text-select',
-        options=[
-            {'label': f"{TEXTS.loc[index]['Title']} ({index})", 'value': index}
-            for index in TEXTS.index
-        ],
-        value=TEXTS.index[0],
-        style={'width': '70%'}
-    ),
-    dcc.Markdown(
-        id = 'article-markdown',
-        children = text_as_markdown(TEXTS.index[0], TEXTS, boldface='the'),
-        style={'width': '70%',
-            'padding': '50px'}
+        style={'padding': '50px'}
     )
 ]

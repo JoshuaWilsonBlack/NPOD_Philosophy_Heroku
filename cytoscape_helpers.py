@@ -2,6 +2,7 @@ import dash
 import dash_cytoscape as cyto
 from dash import dash_table
 from dash import dcc
+import dash_bootstrap_components as dbc
 from dash import html
 
 import pandas as pd
@@ -104,12 +105,25 @@ def generate_network(corpus, rep, dict, term, stat, pri_cooc_num, sec_cooc_num):
                 )
 
     for name in node_names:
-        nodes.append({'data': {
-            'id': name,
-            'label': name,
-            'size': node_degree(name, edges)}
-            }
-        )
+        if name == term:
+            nodes.append(
+                {
+                    'data': {
+                        'id': name,
+                        'label': name,
+                        'size': node_degree(name, edges)
+                    },
+                    'selected': True
+                }
+            )
+        else:
+            nodes.append({'data': {
+                'id': name,
+                'label': name,
+                'size': node_degree(name, edges)}
+                }
+            )
+
 
     network = nodes + edges
 
@@ -164,9 +178,9 @@ cooc_cytoscape = cyto.Cytoscape(
         minZoom=1,
         maxZoom=10,
         layout={'name': 'cose'},
-        style={'width': '85%', 'height': '800px',
+        style={'width': '100%', 'height': '800px',
             'margin': 'auto', 'border-style': 'solid',
-            'margin-top': '10px'},
+            'margin-top': '10px', 'margin-bottom': '10px'},
         elements=[],
         stylesheet=[
             {
@@ -201,13 +215,7 @@ cooc_cytoscape = cyto.Cytoscape(
     )
 
 
-
-cooc_tab = [
-    dcc.Markdown(
-        id = 'cyto-explainer',
-        children = text_content.cytoscape_explainer,
-        style={'width': '80%',
-            'padding': '50px'}),
+control_panel = [
     html.P("Corpus:"),
     dcc.Dropdown(
         id='corpus-select',
@@ -219,7 +227,7 @@ cooc_tab = [
             {'label': 'Final Corpus', 'value': 'cc_3_'}
         ],
         value='cc_3_',
-        style={'width': '40%'}
+        style={'width': '80%'}
     ),
     html.P("Document representation:"),
     dcc.Dropdown(
@@ -229,7 +237,7 @@ cooc_tab = [
             {'label': 'TF-IDF', 'value': 'tf-idf'}
         ],
         value='tf-idf',
-        style={'width': '40%'}
+        style={'width': '60%'}
     ),
     html.P("Dictionary:"),
     dcc.Dropdown(
@@ -238,14 +246,14 @@ cooc_tab = [
             {'label': 'Word list (with corpus proper nouns)', 'value': 'all'}
         ],
         value='all',
-        style={'width': '40%'}
+        style={'width': '80%'}
     ),
     html.P("Search Term (Precalulated Cooccurrences)"),
     dcc.Dropdown(
         id='term',
         options=[{'label': word, 'value': word} for word in preloaded_search_terms('all', 'cc_3_')],
         value='reason',
-        style={'width': '40%'}
+        style={'width': '80%'}
     ),
     html.P("Statistic:"),
     dcc.Dropdown(
@@ -255,7 +263,7 @@ cooc_tab = [
             {'label': 'Log Dice', 'value': 'ld'}
         ],
         value='ld',
-        style={'width': '40%'}
+        style={'width': '60%'}
     ),
     html.P('Primary Cooccurences'),
     dcc.Slider(
@@ -275,6 +283,33 @@ cooc_tab = [
         value=10,
         marks = {n: f'{n}' for n in [i for i in range(1, 51) if i%5==0]}
     ),
-    html.Button('Submit', id='submit-val', n_clicks=0),
-    cooc_cytoscape
-    ]
+    html.Button('Submit', id='submit-val', n_clicks=0)
+]
+
+cooc_tab = [
+    dbc.Row(
+        [
+            dbc.Col(
+                html.Div(
+                    control_panel,
+                    style={'padding': '50px'}
+                ),
+                md = 6,
+                width = 12
+            ),
+            dbc.Col(
+                dcc.Markdown(
+                    id = 'cyto-explainer',
+                    children = text_content.cytoscape_explainer,
+                    style={'width': '80%',
+                        'padding': '50px'}
+                )
+            )
+        ]
+    ),
+    dbc.Row(
+        dbc.Col(
+            cooc_cytoscape
+        )
+    )
+]

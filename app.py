@@ -1,5 +1,6 @@
 import dash
 import dash_cytoscape as cyto
+import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State
 from dash import html
 from dash import dcc
@@ -11,7 +12,8 @@ import cytoscape_helpers
 import text_helpers
 import cooc_table_helpers
 
-external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
+#external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
+external_stylesheets = [dbc.themes.BOOTSTRAP]
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
@@ -19,21 +21,21 @@ app.title = 'Philosophical Contestation in Early New Zealand Newspapers'
 
 server = app.server
 
-app.layout = html.Div([
+app.layout = dbc.Container([
     dcc.Markdown(children=text_content.opening_text),
-    dcc.Tabs([
-        dcc.Tab(
+    dbc.Tabs([
+        dbc.Tab(
             label='Cooccurrence Networks',
             children=cytoscape_helpers.cooc_tab
             ),
         # dcc.Tab(
         #     label='Cooccurence Table',
         #     children=cytoscape_helpers.cooc_table)
-        dcc.Tab(
+        dbc.Tab(
             label='Cooccurrence Tables',
             children=cooc_table_helpers.cooc_table_tab
         ),
-        dcc.Tab(
+        dbc.Tab(
             label='View Texts',
             children=text_helpers.text_tab
         )
