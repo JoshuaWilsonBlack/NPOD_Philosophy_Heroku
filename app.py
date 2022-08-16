@@ -15,13 +15,13 @@ import cooc_table_helpers
 #external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 external_stylesheets = [dbc.themes.BOOTSTRAP]
 
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+dash_app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
-app.title = 'Philosophical Contestation in Early New Zealand Newspapers'
+dash_app.title = 'Philosophical Contestation in Early New Zealand Newspapers'
 
-server = app.server
+app = dash_app.server
 
-app.layout = dbc.Container([
+dash_app.layout = dbc.Container([
     dcc.Markdown(children=text_content.opening_text),
     dbc.Tabs([
         dbc.Tab(
@@ -43,7 +43,7 @@ app.layout = dbc.Container([
 ])
 # Cooccurrence callbacks.
 # Change preloaded search terms given dictionary or corpus change choice
-@app.callback(
+@dash_app.callback(
     [Output(component_id='term', component_property='options'),
     Output(component_id='dictionary', component_property='options')],
     [Input(component_id='dictionary', component_property='value'),
@@ -81,7 +81,7 @@ def return_terms_and_opts(dict_type, corpus):
 
 
 # Function on press submit, to change cooccurrence network.
-@app.callback(
+@dash_app.callback(
     [Output(component_id='cooccurrence-network', component_property='elements'),
     Output(component_id='cooccurrence-network', component_property='stylesheet')],
     [Input(component_id='submit-val', component_property='n_clicks')],
@@ -105,7 +105,7 @@ def update_network(n_clicks, corpus, rep, dict, term, stat, pri_cooc_num, sec_co
 
 #### Text display callbacks
 # Update the displayed text.
-@app.callback(
+@dash_app.callback(
     Output(component_id='article-markdown', component_property='children'),
     Input(component_id='text-select', component_property='value'),
     State(component_id='search-box', component_property='value')
@@ -130,7 +130,7 @@ def update_text_dangerous(index, search):
 
 
 # When corpus changes or search is made, load first doc
-@app.callback(
+@dash_app.callback(
     Output(component_id='text-select', component_property='value'),
     Input(component_id='text-select', component_property='options')
 )
@@ -143,7 +143,7 @@ def load_first_doc(indices):
 
 
 # Load subcorpus or filter by seach term.
-@app.callback(
+@dash_app.callback(
     Output(component_id='text-select', component_property='options'),
     Input(component_id='sub-corpus', component_property='value'),
     Input(component_id='search-box', component_property='value')
@@ -171,7 +171,7 @@ def change_corpus(subcorpus, search_term):
         formatted_index = []
     return formatted_index
 
-@app.callback(
+@dash_app.callback(
     Output(component_id='search-box', component_property='value'),
     Input(component_id='sub-corpus', component_property='value')
 )
@@ -182,7 +182,7 @@ def reset_searchbox(sub_corpus):
 
 ### Cooccurrence table updates.
 ## Load new table on pressing 'submit'
-@app.callback(
+@dash_app.callback(
     Output(component_id='cooc-table', component_property='data'),
     Input(component_id='table-submit-val', component_property='n_clicks'),
     State(component_id='table-corpus-select', component_property='value'),
@@ -196,7 +196,7 @@ def update_table(n_clicks, corpus, rep, dict, term, stat):
     return new_df.to_dict('records')
 
 ## Load new search terms on corpus change
-@app.callback(
+@dash_app.callback(
     Output(component_id='table-term', component_property='options'),
     Input(component_id='table-dictionary', component_property='value'),
     Input(component_id='table-corpus-select', component_property='value'),
@@ -214,4 +214,4 @@ def table_return_terms(dict, corpus, rep, stat):
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    dash_app.run_server(debug=True)
