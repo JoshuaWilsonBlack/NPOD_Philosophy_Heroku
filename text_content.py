@@ -19,7 +19,7 @@ cytoscape_explainer = """The following controls are available for constructing c
 
 * **Corpus:** Select a corpus to generate cooccurence networks from. The "Final Corpus" is the most recent corpus, candidate corpus 0 is keyword search results for 'philoso*'.
 * **Document representation**: represent articles as either bags of words (a count for each word in the dictionary), or with the TF-IDF transformation (where words are scaled on the basis of their prevalence in the corpus). TF-IDF reduces the salience of words which are common across the corpus.
-* **Search term**: select a search term for which co-occurrences have been precalculated. For the Final Corpus, this is the entire dictionary.
+* **Search term**: select a search term for which co-occurrences have been precalculated. For Candidate Corpus 3, this is the entire dictionary.
 * **Statistic**: select a way to calculate the significance of co-occurrences. Options are mutual information, which quantifies how much information about the appearance of the other co-occurrence is given by the appearance of the search term. Log Dice is similar, but does not vary with corpus size.
 * **Primary co-occurrences**: the number of co-occurring terms for the search term which will appear in the network.
 * **Secondary co-occurrences**: the number of co-occurring terms of each of the primary co-occurrences to be added to the network (they may already be on it).
