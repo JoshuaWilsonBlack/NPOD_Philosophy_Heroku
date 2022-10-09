@@ -19,7 +19,7 @@ dash_app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 dash_app.title = 'Philosophical Contestation in Early New Zealand Newspapers'
 
-app = dash_app.server
+server = dash_app.server
 
 dash_app.layout = dbc.Container([
     dcc.Markdown(children=text_content.opening_text),
