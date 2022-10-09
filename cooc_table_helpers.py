@@ -17,7 +17,7 @@ def return_cooc_df(corpus, dict, term, rep, stat):
     term_df = pd.DataFrame(columns=['Term', 'Score'])
     coocs = cooc_df.loc[term+f'_{stat}']
 
-    if corpus == "cc_3_":
+    if corpus == "cc_3_" or corpus == "cc_4_":
         num_coocs = 200
     else:
         num_coocs = 50
@@ -51,10 +51,11 @@ cooc_table_control_panel = [
             {'label': 'Candidate Corpus 2', 'value': 'cc_2_'},
             {'label': 'Iteration 2 Religion Science Subcorpus',
                 'value': 'rel_v2_'},
-            {'label': 'Final Corpus', 'value': 'cc_3_'}
+            {'label': 'Candidate Corpus 3 (Reported)', 'value': 'cc_3_'},
+            {'label': 'Candidate Corpus 4 (Experimental)', 'value': 'cc_4_'}
         ],
         value='cc_3_',
-        style={'width': '80%'}
+        style={'width': '100%'}
     ),
     html.P("Document representation:"),
     dcc.Dropdown(

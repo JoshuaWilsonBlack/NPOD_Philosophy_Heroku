@@ -109,7 +109,8 @@ text_tab = [
                     {'label': 'Iteration 1', 'value': 'cc_1_'},
                     {'label': 'Iteration 2', 'value': 'cc_2_'},
                     {'label': 'Iteration 2: Religion-Science', 'value': 'rel_v2'},
-                    {'label': 'Final Corpus', 'value': 'cc_3_'},
+                    {'label': 'Iteration 3 (Reported)', 'value': 'cc_3_'},
+                    {'label': 'Iteration 4 (Experimental)', 'value': 'cc_4_'},
                 ],
                 value='cc_3_',
                 style={'width': '70%'}

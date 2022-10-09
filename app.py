@@ -70,7 +70,7 @@ def return_terms_and_opts(dict_type, corpus):
             {'label': 'Proper nouns', 'value': 'propn'},
             {'label': 'Named entities', 'value': 'entities'}
         ]
-    elif corpus == 'cc_3_':
+    elif corpus == 'cc_3_' or corpus == 'cc_4_':
         dict_options = [
             {'label': 'Word list supplemented with proper nouns', 'value': 'all'}
         ]
@@ -156,7 +156,7 @@ def change_corpus(subcorpus, search_term):
         component_id = ctx.triggered[0]['prop_id'].split('.')[0]
 
     if component_id == 'sub-corpus':
-        text_helpers.TEXTS = pd.read_pickle(f'pickles/{subcorpus}_sub_df.tar.gz')
+        text_helpers.TEXTS = pd.read_pickle(f'pickles/{subcorpus}sub_df.tar.gz')
         formatted_index = [
             {'label': f"{text_helpers.TEXTS.loc[index]['Title']} ({index})", 'value': index}
             for index in text_helpers.TEXTS.index
@@ -206,11 +206,43 @@ def update_table(n_clicks, corpus, rep, dict, term, stat):
 def table_return_terms(dict, corpus, rep, stat):
     """
     Given the type of dictionary required (string) for a
-    collocation network, return the precalculated options (list).
+    collocation table, return the precalculated options (list).
     """
     words = cooc_table_helpers.load_search_terms(corpus, dict, rep, stat)
     formatted_words = [{'label': word, 'value': word} for word in words]
     return formatted_words
+
+# Restrict dictionary choices based on corpus.
+@dash_app.callback(
+    Output(component_id='table-dictionary', component_property='options'),
+    Input(component_id='table-corpus-select', component_property='value')
+)
+def return_dictionary_options(corpus):
+    """
+    Given the corpus name as a string, return possible dictionaries.
+    """
+
+    # update options for dictionary choice if corpus is Rel corpus
+    default_dict_options = [
+        {'label': 'All', 'value': 'all'},
+        {'label': 'Proper nouns', 'value': 'propn'},
+        {'label': 'Named entities', 'value': 'entities'}
+    ]
+    if corpus == 'rel_v2_':
+        dict_options = [
+            {'label': 'All (filtered)', 'value': 'all'},
+            {'label': 'All (unfiltered)', 'value': 'all_un'},
+            {'label': 'Proper nouns', 'value': 'propn'},
+            {'label': 'Named entities', 'value': 'entities'}
+        ]
+    elif corpus == 'cc_3_' or corpus == 'cc_4_':
+        dict_options = [
+            {'label': 'Word list supplemented with proper nouns', 'value': 'all'}
+        ]
+    else:
+        dict_options = default_dict_options
+
+    return dict_options
 
 
 if __name__ == '__main__':

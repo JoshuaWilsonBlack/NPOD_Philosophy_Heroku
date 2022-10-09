@@ -210,6 +210,23 @@ rel_entities = sorted([
     'the reign of grace'
 ])
 
+cc_4_all = sorted([
+    "natures",
+    "womanhood",
+    "evolution",
+    "salmond",
+    "parker",
+    "metaphysics",
+    "ethics",
+    "suffrage",
+    "chivalry",
+    "motherhood",
+    "liberalism",
+    "socialism",
+    "punishment",
+    "hell"
+])
+
 
 search_terms = {
     'cc_0_all': philoso_all,
@@ -221,7 +238,8 @@ search_terms = {
     'rel_v2_all': rel_all,
     'rel_v2_all_un': rel_all_un,
     'rel_v2_entities': rel_entities,
-    'rel_v2_propn': rel_propn
+    'rel_v2_propn': rel_propn,
+    'cc_4_all': cc_4_all
 }
 
 # # Useful for testing search terms:

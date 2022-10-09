@@ -1,16 +1,16 @@
 opening_text = """
 # Philosophical Contestation in Early New Zealand Newspapers
-Joshua Black \n
+Joshua Wilson Black \n
 _University of Canterbury_ \n
 <joshua.black@canterbury.ac.nz> \n
-<black.joshuad@gmail.com>
+<joshua@wilsonblack.nz>
 
 
 This dashboard provides access to corpora generated from the New Zealand National Library Te Puna Mātauranga o Aotearoa's Paper's Past Newspaper dataset up to 1900.
 
-The general method of corpus construction is presented at <https://github.com/JoshuaDavidBlack/newspaper-philosophy-methods>. A paper is in preparation describing the method in more detail.
+The general method of corpus construction is presented at <https://github.com/JoshuaWilsonBlack/newspaper-philosophy-methods>. A paper is in preparation describing the method in more detail.
 
-Code for this dashboard is available at <https://github.com/JoshuaDavidBlack/NPOD_Philosophy>.
+Code for this dashboard is available at <https://github.com/JoshuaWilsonBlack/NPOD_Philosophy>.
 
 **Note:** this page contains terms, and charts relationships between terms, from the text of nineteenth century newspapers using various statistical learning methods. As such, it is likely to contain some offensive material.
 """

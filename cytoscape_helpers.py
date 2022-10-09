@@ -75,7 +75,9 @@ def generate_network(corpus, rep, dict, term, stat, pri_cooc_num, sec_cooc_num):
     node_names = set([term])
     edges = []
 
-    cooc_df = pd.read_pickle(f'pickles/cooc_{corpus}{rep.upper()}_{dict}_df.tar.gz')
+    cooc_df = pd.read_pickle(
+        f'pickles/cooc_{corpus}{rep.upper()}_{dict}_df.tar.gz'
+    )
 
     primary_coocs = {
         cooc_df.loc[f'{term}_{stat}'][f'Term {i}']: cooc_df.loc[f'{term}_{stat}'][f'Score {i}']
@@ -224,7 +226,8 @@ control_panel = [
             {'label': 'Candidate Corpus 2', 'value': 'cc_2_'},
             {'label': 'Iteration 2 Religion Science Subcorpus',
                 'value': 'rel_v2_'},
-            {'label': 'Final Corpus', 'value': 'cc_3_'}
+            {'label': 'Candidate Corpus 3 (Reported)', 'value': 'cc_3_'},
+            {'label': 'Candidate Corpus 4 (Experimental)', 'value': 'cc_4_'}
         ],
         value='cc_3_',
         style={'width': '80%'}
